@@ -41,8 +41,18 @@
         height: 25px;
         background: none;
       }
-      [type="range"]::-webkit-slider-thumb,
-      [type="range"]::-moz-range-thumb {
+      input[type="range"]::-moz-range-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 0;
+        border-color: black;
+        background: #04aa6d;
+        cursor: pointer;
+        transform: rotate(45deg);
+      }
+      input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
         width: 25px;
