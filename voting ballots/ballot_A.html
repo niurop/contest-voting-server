@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, , user-scalable=no"
+    />
+    <title>Voting ballot A</title>
+    <script src="../utils.js"></script>
+    <script src="../contest.js"></script>
+    <style>
+      html {
+        overflow: hidden;
+      }
+      body {
+        top: 5px;
+        bottom: 5px;
+        left: 5px;
+        right: 5px;
+        text-align: center;
+        overflow: hidden;
+        position: absolute;
+        margin: 0;
+      }
+      #votingArea {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+      }
+      [type="range"] {
+        margin: 0;
+        position: relative;
+        transform: matrix(0, -1, 1, 0, 0, 0) translateX(-100%);
+        transform-origin: left top;
+        width: var(--height);
+        -webkit-appearance: none; /* Override default CSS styles */
+        appearance: none;
+        height: 25px;
+        background: none;
+      }
+      [type="range"]::-webkit-slider-thumb,
+      [type="range"]::-moz-range-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 0;
+        border-color: black;
+        background: #04aa6d;
+        cursor: pointer;
+        transform: rotate(45deg);
+      }
+      #prev {
+        left: 20px;
+        position: absolute;
+        width: 4em;
+      }
+      #next {
+        right: 20px;
+        position: absolute;
+        width: 4em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="information">
+      <h2 id="contestant">Johnny Wicked</h2>
+      <h2 id="category">CONTENT 50/100</h2>
+      <h3 id="item">Speech Development</h3>
+      <p id="elements">Structure, Organization, Support Material</p>
+      <span>
+        <button id="prev">Prev</button>
+        <b>Points: <span id="score"></span></b>
+        <button id="next">Skip</button>
+      </span>
+    </div>
+    <div id="votingArea"></div>
+  </body>
+
+  <script defer>
+    const state = {
+      contestantId: 0,
+      itemId: 0,
+      DOMObjects: {
+        contestant: null,
+        category: null,
+        item: null,
+        elements: null,
+        score: null,
+        votingArea: null,
+        information: null,
+        prev: null,
+        next: null,
+      },
+    };
+
+    const create_slider = (obj, height, options, score) => {
+      const container = document.createElement("div");
+      const slider = document.createElement("input");
+      for (const key in options) slider.setAttribute(key, options[key]);
+      slider.setAttribute("type", "range");
+      slider.style.setProperty("--height", px(height));
+      container.appendChild(slider);
+      obj.appendChild(container);
+      const rect = getRect(slider);
+      container.style.width = px(rect.width);
+      container.style.height = px(rect.height);
+      container.width = rect.width;
+      container.height = rect.height;
+      container.style.position = "absolute";
+      container.style.right = "50px";
+
+      const oninput = () => {
+        state.DOMObjects.score.innerHTML = slider.value;
+      };
+
+      if (score == -1)
+        slider.oninput = () => {
+          state.DOMObjects.next.innerHTML = "Next";
+          oninput();
+          slider.oninput = oninput;
+        };
+      else {
+        state.DOMObjects.next.innerHTML = "Next";
+        slider.value = score;
+        slider.oninput = oninput;
+      }
+      return container;
+    };
+
+    const display_item = () => {
+      const cId = state.contestantId;
+      const iId = state.itemId;
+      const ctn = CONTESTANTS[cId];
+      const item = JUDGING_ITEMS[iId];
+      const _ = state.DOMObjects;
+      _.contestant.innerHTML = `${ctn} [${cId + 1}/${CONTESTANTS.length}]`;
+      _.category.innerHTML = item.category;
+      _.item.innerHTML = `item: ${item.item} [${iId + 1}/${
+        JUDGING_ITEMS.length
+      }]`;
+      _.elements.innerHTML = item.elements;
+      _.score.innerHTML = SCORES[cId][iId] > -1 ? SCORES[cId][iId] : "";
+      _.votingArea.innerHTML = "";
+      _.votingArea.style.top = `${getRect(_.information).bottom}px`;
+      const rect = getRect(_.votingArea);
+      _.votingArea.width = rect.width;
+      _.votingArea.height = rect.height;
+
+      _.next.innerHTML = "Skip";
+
+      const slider = create_slider(
+        _.votingArea,
+        _.votingArea.height - 25,
+        item.range,
+        SCORES[cId][iId]
+      );
+
+      const hMap = (v) =>
+        map(
+          item.range.min,
+          item.range.max,
+          v,
+          slider.height - slider.width / 2,
+          slider.width / 2
+        );
+
+      item.ranges.forEach((element) => {
+        const hMax = hMap(element.hMax);
+        const hMin = hMap(element.hMin);
+        const block = document.createElement("div");
+        block.style.position = "absolute";
+        block.style.left = px(slider.width / 2);
+        block.style.width = slider.style.width;
+        block.style.height = px(hMin - hMax);
+        block.style.background = element.color;
+        block.style.top = px(hMax);
+        block.style.zIndex = -100;
+        slider.appendChild(block);
+      });
+
+      const unique_scores = {};
+      for (let i in CONTESTANTS)
+        if (i != cId && SCORES[i][iId] > -1) {
+          unique_scores[SCORES[i][iId]] = unique_scores[SCORES[i][iId]] || [];
+          unique_scores[SCORES[i][iId]].push(Number(i));
+        }
+      for (let i = 0; i < item.range.max; i++)
+        if (i in unique_scores) {
+          const name = document.createElement("div");
+          name.innerHTML = `${unique_scores[i]
+            .map((id) => SHORTS[id])
+            .join(", ")} [${i}] -`;
+          name.style.position = "absolute";
+          name.style.top = px(hMap(i));
+          name.style.textAlign = "right";
+          name.style.zIndex = -100;
+          name.style.right = px(slider.width + 10);
+          name.style.transform = "translateY(-0.9em)";
+          name.style.width = "max-content";
+          slider.appendChild(name);
+        }
+    };
+
+    const setScore = () => {
+      if (
+        state.contestantId >= 0 &&
+        state.contestantId < CONTESTANTS.length &&
+        state.itemId >= 0 &&
+        state.itemId < JUDGING_ITEMS.length &&
+        state.DOMObjects.score.innerHTML != ""
+      ) {
+        SCORES[state.contestantId][state.itemId] = Number(
+          state.DOMObjects.score.innerHTML
+        );
+      }
+    };
+
+    document.body.onload = () => {
+      const _ = state.DOMObjects; // Dirty way of moving variables into "scope"
+      for (const key in _) _[key] = document.getElementById(key);
+
+      _.next.onclick = () => {
+        setScore();
+        state.itemId++;
+        if (state.itemId >= JUDGING_ITEMS.length) {
+          state.itemId = 0;
+          state.contestantId++;
+          if (state.contestantId >= CONTESTANTS.length) {
+            state.contestantId = 0;
+          }
+        }
+        display_item();
+      };
+      _.prev.onclick = () => {
+        setScore();
+        state.itemId--;
+        if (state.itemId < 0) {
+          state.itemId = JUDGING_ITEMS.length - 1;
+          state.contestantId--;
+          if (state.contestantId < 0) {
+            state.contestantId = CONTESTANTS.length - 1;
+          }
+        }
+        display_item();
+      };
+
+      display_item();
+    };
+  </script>
+</html>
