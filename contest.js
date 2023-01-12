@@ -1,3 +1,12 @@
+const CONTESTANTS = [
+  "Mark Twain",
+  "Albert Einstein",
+  "Capitan Jack Sparrow",
+  "Nicola Tesla",
+];
+
+const SHORTS = ["Mark", "Albert", "Capitan", "Nicola"];
+
 const JUDGING_ITEMS = [
   {
     category: "Content",
@@ -28,15 +37,6 @@ const JUDGING_ITEMS = [
       "<b>Effectiveness</b> is measured in part by the audience’s reception of the speech, but a large part is your subjective judgement of how the speech came across. You should ask yourself such questions as “Was I able to determine the speaker’s purpose?” “Did the speech relate directly to that purpose?” “Was the audience’s interest held by the speaker?” “Was this speech subject appropriate for this particular audience?”",
   },
 ];
-
-const CONTESTANTS = [
-  "Mark Twain",
-  "Albert Einstein",
-  "Capitan Jack Sparrow",
-  "Nicola Tesla",
-];
-
-const SHORTS = ["Mark", "Albert", "Capitan", "Nicola"];
 
 const SCORES = CONTESTANTS.map((_) => JUDGING_ITEMS.map((_) => -1));
 

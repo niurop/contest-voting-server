@@ -131,8 +131,7 @@
   <body>
     <div id="sec_table">
       <div id="table_div"></div>
-      <button>Next contestant</button>
-      <button>Submit</button>
+      <button id="submit">Submit</button>
     </div>
     <div id="sec_voting" class="hidden">
       <div id="information">
@@ -158,6 +157,7 @@
 
   <script defer>
     const state = {
+      current_contestantId: 0,
       contestantId: -1,
       itemId: 0,
       DOMObjects: {
@@ -176,6 +176,7 @@
         info: null,
         home: null,
         table_div: null,
+        submit: null,
       },
     };
 
@@ -251,22 +252,74 @@
     const display_table = () => {
       const cId = state.contestantId;
       const _ = state.DOMObjects;
+      let all_nonempty = true;
+      let all_empty = false;
       if (cId > -1) {
         for (let i in JUDGING_ITEMS) {
           if (SCORES[cId][i] > -1) {
             _.table[i][cId].innerHTML = SCORES[cId][i];
             _.table[i][cId].classList.remove("empty");
+            all_empty = false;
           } else {
             _.table[i][cId].innerHTML = "";
             _.table[i][cId].classList.add("empty");
+            all_nonempty = false;
           }
         }
+
+        if (all_nonempty) {
+          if (cId == state.current_contestantId) {
+            _.submit.innerHTML = `Submit: ${CONTESTANTS[cId]}`;
+          } else {
+            _.submit.innerHTML = `Update: ${CONTESTANTS[cId]}`;
+          }
+          _.submit.onclick = () => {
+            if (cId == state.current_contestantId) {
+              state.current_contestantId++;
+            }
+            state.contestantId = state.current_contestantId;
+            display_table();
+          };
+        } else {
+          if (all_empty) {
+            _.submit.innerHTML = `Evaluate: ${
+              CONTESTANTS[state.current_contestantId]
+            }`;
+            _.submit.onclick = () => {
+              state.contestantId = state.current_contestantId;
+              state.itemId = 0;
+              display_item();
+            };
+          } else {
+            _.submit.innerHTML = `Fill missing: ${CONTESTANTS[cId]}`;
+            _.submit.onclick = () => {
+              for (let i in SCORES)
+                if (SCORES[i][cId] == -1) {
+                  state.itemId = i;
+                  display_item();
+                  return;
+                }
+            };
+          }
+        }
+      } else {
+        _.submit.innerHTML = `Evaluate: ${CONTESTANTS[0]}`;
+        _.submit.onclick = () => {
+          state.contestantId = 0;
+          state.itemId = 0;
+          display_item();
+        };
       }
+
       hideElem(_.sec_voting);
       showElem(_.sec_table);
     };
 
     const display_item = () => {
+      if (state.contestantId > state.current_contestantId) {
+        state.contestantId = state.current_contestantId;
+        return display_table();
+      }
       const cId = state.contestantId;
       const iId = state.itemId;
       const ctn = CONTESTANTS[cId];
