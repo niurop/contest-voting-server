@@ -11,7 +11,7 @@ const JUDGING_ITEMS = [
       { t: "excellent", min: 20, max: 20, color: "#05445e" },
     ],
     description:
-      "is the way the speaker puts ideas together so the audience can understand them. The speech is structured around a purpose, and this structure must include an opening, body and conclusion. A good speech immediately engages the audience’s attention and then moves forward toward a significant conclusion. This development of the speech structure is supported by relevant examples and illustrations, facts and figures, delivered with such smoothness that they blend into the framework of the speech to present the audience with a unified whole.",
+      "<b>Speech Development</b> is the way the speaker puts ideas together so the audience can understand them. The speech is structured around a purpose, and this structure must include an opening, body and conclusion. A good speech immediately engages the audience’s attention and then moves forward toward a significant conclusion. This development of the speech structure is supported by relevant examples and illustrations, facts and figures, delivered with such smoothness that they blend into the framework of the speech to present the audience with a unified whole.",
   },
   {
     category: "Content",
@@ -25,7 +25,7 @@ const JUDGING_ITEMS = [
       { t: "excellent", min: 15, max: 15, color: "#05445e" },
     ],
     description:
-      "is measured in part by the audience’s reception of the speech, but a large part is your subjective judgement of how the speech came across. You should ask yourself such questions as “Was I able to determine the speaker’s purpose?” “Did the speech relate directly to that purpose?” “Was the audience’s interest held by the speaker?” “Was this speech subject appropriate for this particular audience?”",
+      "<b>Effectiveness</b> is measured in part by the audience’s reception of the speech, but a large part is your subjective judgement of how the speech came across. You should ask yourself such questions as “Was I able to determine the speaker’s purpose?” “Did the speech relate directly to that purpose?” “Was the audience’s interest held by the speaker?” “Was this speech subject appropriate for this particular audience?”",
   },
 ];
 
