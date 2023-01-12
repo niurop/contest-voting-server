@@ -36,6 +36,34 @@ const JUDGING_ITEMS = [
     description:
       "<b>Effectiveness</b> is measured in part by the audience’s reception of the speech, but a large part is your subjective judgement of how the speech came across. You should ask yourself such questions as “Was I able to determine the speaker’s purpose?” “Did the speech relate directly to that purpose?” “Was the audience’s interest held by the speaker?” “Was this speech subject appropriate for this particular audience?”",
   },
+  {
+    category: "Content",
+    item: "Speech Value",
+    elements: "Ideas, Logic, Original Thought",
+    range: { min: 0, max: 15, step: 1, value: 8 },
+    ranges: [
+      { t: "fair", min: 0, max: 5, color: "#d4f1f4" },
+      { t: "good", min: 6, max: 10, color: "#75e6da" },
+      { t: "very good", min: 11, max: 14, color: "#189ab4" },
+      { t: "excellent", min: 15, max: 15, color: "#05445e" },
+    ],
+    description:
+      "<b>Speech Value</b> justifies the act of speaking. The speaker has a responsibility to say something meaningful and original to the audience. The listeners should feel the speaker has made a contribution to their thinking. The ideas should be important ones, although this does not preclude a humorous presentation of them.",
+  },
+  {
+    category: "Delivery",
+    item: "Physical",
+    elements: "Appearance, Body Language, Speaking Area",
+    range: { min: 0, max: 10, step: 1, value: 5 },
+    ranges: [
+      { t: "fair", min: 0, max: 3, color: "#d4f1f4" },
+      { t: "good", min: 4, max: 6, color: "#75e6da" },
+      { t: "very good", min: 7, max: 9, color: "#189ab4" },
+      { t: "excellent", min: 10, max: 10, color: "#05445e" },
+    ],
+    description:
+      "<b>Physical</b> presentation of a speech carries part of the responsibility for effective communication. The speaker’s appearance should reinforce the speech, whether profound, sad, humorous or instructional. Body language should support points through gestures, expressions and body positioning. The speaker makes effective use of and stays within the designated speaking area.",
+  },
 ];
 
 const SCORES = CONTESTANTS.map((_) => JUDGING_ITEMS.map((_) => -1));
