@@ -105,13 +105,35 @@
         text-align: justify;
       }
 
+      #table_div {
+        overflow: auto;
+      }
+
+      th {
+        position: -webkit-sticky;
+        position: sticky;
+        background: white;
+      }
+      th.top {
+        top: 0;
+      }
+      th.left {
+        left: 0;
+      }
       td.empty {
         background: yellow;
+      }
+      #table_div {
+        height: 70vh;
       }
     </style>
   </head>
   <body>
-    <div id="sec_table"></div>
+    <div id="sec_table">
+      <div id="table_div"></div>
+      <button>Next contestant</button>
+      <button>Submit</button>
+    </div>
     <div id="sec_voting" class="hidden">
       <div id="information">
         <h2 id="contestant">Johnny Wicked</h2>
@@ -153,6 +175,7 @@
         item_info: null,
         info: null,
         home: null,
+        table_div: null,
       },
     };
 
@@ -194,22 +217,25 @@
     };
 
     const create_table = () => {
-      const create_tb_elem = (type, text, parent) => {
+      const create_tb_elem = (type, text, parent, c = undefined) => {
         const e = document.createElement(type);
         e.innerHTML = text;
         parent.appendChild(e);
+        c && e.classList.add(c);
         return e;
       };
       const table = document.createElement("table");
       let row = create_tb_elem("tr", "", table);
-      create_tb_elem("th", "", row);
-      for (let contestant of CONTESTANTS) create_tb_elem("th", contestant, row);
+      create_tb_elem("th", "", row, "left");
+      for (let contestant of CONTESTANTS) {
+        let th = create_tb_elem("th", contestant, row, "top");
+      }
 
       state.DOMObjects.table = [];
       for (let i in JUDGING_ITEMS) {
         state.DOMObjects.table.push([]);
         row = create_tb_elem("tr", "", table);
-        create_tb_elem("th", JUDGING_ITEMS[i].item, row);
+        create_tb_elem("th", JUDGING_ITEMS[i].item, row, "left");
         for (let c in CONTESTANTS) {
           let box = create_tb_elem("td", "", row);
           state.DOMObjects.table[i].push(box);
@@ -220,7 +246,7 @@
           };
         }
       }
-      state.DOMObjects.sec_table.appendChild(table);
+      state.DOMObjects.table_div.appendChild(table);
     };
     const display_table = () => {
       const cId = state.contestantId;
